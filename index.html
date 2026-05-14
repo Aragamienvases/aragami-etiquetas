@@ -16,7 +16,7 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--drk
 h1{font-size:26px;font-weight:700;margin-bottom:6px;}
 .sub{font-size:14px;color:var(--mut);margin-bottom:36px;}
 .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:820px;width:100%;}
-.pb{background:var(--sur);border:1.5px solid var(--bor);border-radius:10px;padding:22px 14px;text-align:center;cursor:pointer;transition:all .15s;}
+.pb{background:var(--sur);border:1.5px solid var(--bor);border-radius:10px;padding:22px 14px;text-align:center;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:rgba(0,0,0,.1);touch-action:manipulation;user-select:none;-webkit-user-select:none;font-family:'IBM Plex Sans',sans-serif;width:100%;}
 .pb:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1);}
 .pb.of:hover{border-color:var(--red);background:#fff8f6;}
 .pb.im:hover{border-color:var(--grn);background:#f6fff8;}
@@ -33,9 +33,9 @@ h1{font-size:26px;font-weight:700;margin-bottom:6px;}
 .sdb-hd{padding:12px 16px;border-bottom:1px solid var(--bor);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);background:#faf9f7;display:flex;align-items:center;justify-content:space-between;}
 .sdb-hd button{background:var(--red);color:#fff;border:none;border-radius:3px;padding:4px 9px;font-size:10px;font-weight:700;cursor:pointer;}
 .stabs{display:flex;border-bottom:1px solid var(--bor);}
-.stab{flex:1;text-align:center;padding:8px 4px;font-size:10px;font-weight:600;cursor:pointer;color:var(--mut);border-bottom:2px solid transparent;}
+.stab{flex:1;text-align:center;padding:8px 4px;font-size:10px;font-weight:600;cursor:pointer;color:var(--mut);border-bottom:2px solid transparent;-webkit-tap-highlight-color:rgba(0,0,0,.05);touch-action:manipulation;}
 .stab.act{color:var(--red);border-bottom-color:var(--red);}
-.pi{padding:11px 16px;border-bottom:1px solid var(--bor);cursor:pointer;transition:background .12s;position:relative;padding-right:60px;}
+.pi{padding:11px 16px;border-bottom:1px solid var(--bor);cursor:pointer;transition:background .12s;position:relative;padding-right:60px;-webkit-tap-highlight-color:rgba(0,0,0,.05);touch-action:manipulation;}
 .pi:hover{background:#faf9f7;}.pi.act{background:#fff8f6;border-left:3px solid var(--red);}
 .pi-ref{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;margin-bottom:2px;}
 .pi-cli{font-size:11px;color:var(--mut);margin-bottom:4px;}
@@ -128,19 +128,22 @@ h1{font-size:26px;font-weight:700;margin-bottom:6px;}
   <h1>Quien eres?</h1>
   <div class="sub">Selecciona tu perfil para continuar</div>
   <div class="pgrid">
-    <div class="pb of" onclick="login('of')"><span class="ic">👔</span><div class="nm">OFICINA</div><div class="ds">Gestion pedidos</div></div>
-    <div class="pb im" onclick="login('f1')"><span class="ic">🖨️</span><div class="nm">FLEXO 1</div><div class="ds">Impresion flexo</div></div>
-    <div class="pb im" onclick="login('f2')"><span class="ic">🖨️</span><div class="nm">FLEXO 2</div><div class="ds">Impresion flexo</div></div>
-    <div class="pb im" onclick="login('di')"><span class="ic">🖥️</span><div class="nm">DIGITAL</div><div class="ds">Impresion digital</div></div>
-    <div class="pb fa" onclick="login('fa65')"><span class="ic">🏭</span><div class="nm">FABRICA 6,5oz</div><div class="ds">Linea 6,5oz</div></div>
-    <div class="pb fa" onclick="login('fa6')"><span class="ic">🏭</span><div class="nm">FABRICA 6oz</div><div class="ds">Linea 6oz</div></div>
-    <div class="pb fa" onclick="login('fa4812')"><span class="ic">🏭</span><div class="nm">FABRICA 4,8,12oz</div><div class="ds">Linea multiple</div></div>
+    <button class="pb of" onclick="login('of')"><span class="ic">👔</span><div class="nm">OFICINA</div><div class="ds">Gestion pedidos</div></button>
+    <button class="pb im" onclick="login('f1')"><span class="ic">🖨️</span><div class="nm">FLEXO 1</div><div class="ds">Impresion flexo</div></button>
+    <button class="pb im" onclick="login('f2')"><span class="ic">🖨️</span><div class="nm">FLEXO 2</div><div class="ds">Impresion flexo</div></button>
+    <button class="pb im" onclick="login('di')"><span class="ic">🖥️</span><div class="nm">DIGITAL</div><div class="ds">Impresion digital</div></button>
+    <button class="pb fa" onclick="login('fa65')"><span class="ic">🏭</span><div class="nm">FABRICA 6,5oz</div><div class="ds">Linea 6,5oz</div></button>
+    <button class="pb fa" onclick="login('fa6')"><span class="ic">🏭</span><div class="nm">FABRICA 6oz</div><div class="ds">Linea 6oz</div></button>
+    <button class="pb fa" onclick="login('fa4812')"><span class="ic">🏭</span><div class="nm">FABRICA 4,8,12oz</div><div class="ds">Linea multiple</div></button>
   </div>
 </div>
 <div id="app" class="hid">
   <div class="hdr">
     <div class="hdr-logo">ARAGAMI ETIQUETAS</div>
-    <div class="badg" id="badg" onclick="logout()"></div>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <span id="save-ind" style="font-size:11px;font-weight:600;font-family:'IBM Plex Mono',monospace;"></span>
+      <div class="badg" id="badg" onclick="logout()"></div>
+    </div>
   </div>
   <div class="lay">
     <div class="sdb">
@@ -186,7 +189,7 @@ function loadData(cb){
 function login(p){
   var pass=null;
   if(p==='of')pass='2026';
-  else if(p==='f1'||p==='f2'||p==='di')pass='2620';
+  else if(p==='f1'||p==='f2'||p==='di')pass='2026';
   if(pass){
     var authed=sessionStorage.getItem('auth_'+p);
     if(!authed){
@@ -304,9 +307,9 @@ function onUdsChange(){var udsEl=document.getElementById('c-uds');if(!udsEl||!se
 function vOf(m){
   var p=sel;var r=p.uds>0?calcCierre(p.uds,p.caj,p.cant):null;
   var envBtns='';
-  if(curTab==='enc')envBtns='<div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn b2" onclick="selDest(\'imp\')">Enviar a Impresion</button><button class="btn b1" onclick="selDest(\'fab\')">Enviar a Fabrica</button></div>';
-  else if(curTab==='ter')envBtns='<div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn b5" onclick="albaranar()">Marcar Albaranado</button><button class="btn b2" onclick="selDest(\'imp\')">Reenviar Impresion</button><button class="btn b1" onclick="selDest(\'fab\')">Reenviar Fabrica</button></div>';
-  else if(curTab==='alb')envBtns='<div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn b2" onclick="selDest(\'imp\')">Reenviar Impresion</button><button class="btn b1" onclick="selDest(\'fab\')">Reenviar Fabrica</button></div>';
+  if(curTab==='enc')envBtns='<div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn b2" onclick="selDest(\'imp\')">Enviar a Impresion</button><button class="btn b1" onclick="selDest(\'fab\')">Enviar a Fabrica</button><button class="btn b3" onclick="imprimirHoja()">🖨️ Imprimir hoja A4</button></div>';
+  else if(curTab==='ter')envBtns='<div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn b5" onclick="albaranar()">Marcar Albaranado</button><button class="btn b2" onclick="selDest(\'imp\')">Reenviar Impresion</button><button class="btn b1" onclick="selDest(\'fab\')">Reenviar Fabrica</button><button class="btn b3" onclick="imprimirHoja()">🖨️ Imprimir hoja A4</button></div>';
+  else if(curTab==='alb')envBtns='<div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn b2" onclick="selDest(\'imp\')">Reenviar Impresion</button><button class="btn b1" onclick="selDest(\'fab\')">Reenviar Fabrica</button><button class="btn b3" onclick="imprimirHoja()">🖨️ Imprimir hoja A4</button></div>';
   m.innerHTML='<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px;">'+
     '<div><div style="font-size:10px;color:var(--mut);font-weight:700;text-transform:uppercase;">Pedido</div>'+
     '<div style="font-size:19px;font-weight:700;font-family:monospace;">'+p.num+' - '+p.ref+'</div></div>'+envBtns+'</div>'+
@@ -320,6 +323,7 @@ function vOf(m){
     '<div><div class="ik">Impresion</div><div class="iv" style="font-family:sans-serif;font-size:11px;">'+p.imp+'</div></div>'+
     '<div><div class="ik">Packaging</div><div class="iv">'+p.bol+'/'+p.caj+'/'+p.cant+'</div></div>'+
     '<div><div class="ik">Etiquetas</div><div class="iv" style="color:var(--red);font-weight:700;">'+p.netiq+'</div></div>'+
+    '<div><div class="ik">Total vasos</div><div class="iv" style="color:var(--red);font-weight:700;">'+(p.netiq*p.caj).toLocaleString('es-ES')+'</div></div>'+
     cajAnonBadge(p)+
     (r?'<div><div class="ik">Uds producidas</div><div class="iv" style="color:var(--grn);font-weight:700;">'+p.uds+'</div></div>':'')+
     (r?'<div><div class="ik">Cajas+pico</div><div class="iv">'+r.cajComp+' cajas'+(r.pico?' + '+r.pico+' uds':'')+'</div></div>':'')+
@@ -367,9 +371,10 @@ function vImp(m){
     '<div class="lsep">-</div><div class="lf"><label>Planta</label><select id="lpl" onchange="ul()">'+plo+'</select></div>'+
     '<div class="lf"><label>Mat</label><select id="lm" onchange="ul()">'+mo+'</select></div>'+
     '</div><div class="lres" id="lr">'+loteInicial+'</div>'+
-    '<div style="display:flex;gap:8px;margin-top:8px;">'+
-    '<button class="btn b3" style="font-size:12px;" onclick="apLote()">Aplicar lote</button>'+
-    (!isEnc?'<div><div style="background:#fff8e1;border:1px solid #ffb300;border-radius:4px;padding:8px 12px;margin-bottom:8px;font-size:12px;color:#7a5900;">👆 Pulsa el boton para iniciar el proceso e indicar que el pedido esta En Curso</div><button class="btn b2 pulso" style="font-size:12px;" onclick="marcarEnCursoImp()">Marcar En Curso</button></div>':'')+
+    '<div style="margin-top:8px;">'+
+    (isEnc
+      ? '<div class="pulso" style="background:var(--grn);color:#fff;border-radius:4px;padding:12px 22px;font-size:15px;font-weight:700;display:inline-block;letter-spacing:.05em;">PEDIDO EN CURSO</div>'
+      : '<button class="btn b2" style="font-size:13px;padding:12px 22px;" onclick="apLote()">Confirma lote para pedido en curso</button>')+
     '</div></div></div>':
     (p.lote?'<div class="pan"><div class="ph">Lote</div><div class="pb2"><div class="lres" style="margin-top:0;">'+p.lote+'</div></div></div>':''))+
     (!isDone?'<div class="pan"><div class="ph">Cajas</div><div class="pb2"><div class="cr">'+
@@ -414,7 +419,9 @@ function vFab(m){
     '<div class="ci"><label>Fin</label><input type="number" id="cf" value="'+p.netiq+'" oninput="uct()"></div>'+
     '<div class="ct" id="ct">= '+p.netiq+' etiquetas</div></div></div></div>'+
     '<div class="br" style="margin-bottom:14px;">'+
-    (!isEnc?'<div style="width:100%;"><div style="background:#fff8e1;border:1px solid #ffb300;border-radius:4px;padding:8px 12px;margin-bottom:8px;font-size:12px;color:#7a5900;">👆 Pulsa el boton para iniciar la produccion e indicar que el pedido esta En Curso</div><button class="btn b2 pulso" onclick="marcarEnCursoFab()">Marcar En Curso</button></div>':'')+
+    (isEnc
+      ? '<div class="pulso" style="background:var(--grn);color:#fff;border-radius:4px;padding:12px 22px;font-size:15px;font-weight:700;display:inline-block;letter-spacing:.05em;">PEDIDO EN CURSO</div>'
+      : '<button class="btn b2" onclick="marcarEnCursoFab()">Confirma pedido en curso</button>')+
     '<button class="btn b1" onclick="imprimir()">Imprimir en Zebra</button></div>'+
     '<div class="pan"><div class="ph">Cerrar pedido</div><div class="pb2">'+
     '<div class="f2" style="margin-bottom:10px;"><label>Unidades producidas</label><input type="number" id="c-uds" placeholder="100000" oninput="onUdsChange()"></div>'+
@@ -435,10 +442,18 @@ function vFab(m){
 }
 
 function ul(){var lp=document.getElementById('lp'),la=document.getElementById('la'),lab=document.getElementById('lab'),lpl=document.getElementById('lpl'),lm=document.getElementById('lm');if(!lp)return;document.getElementById('lr').textContent='LOTE: '+lp.value+la.value+'-'+(lab.value||'?')+'-'+lpl.value+lm.value;}
-function apLote(){var el=document.getElementById('lr');if(!el)return;var l=el.textContent.replace('LOTE: ','');if(l==='-')return;sel.lote=l;savePedidos();rlp('lbp','ni',sel,caja);}
+function apLote(){var el=document.getElementById('lr');if(!el)return;var l=el.textContent.replace('LOTE: ','');if(l==='-'||!l)return;sel.lote=l;if(sel.est==='imp')sel.est='imp-enc';savePedidosConFeedback();renderList();renderMain();}
 function uct(){var i=parseInt(document.getElementById('ci').value)||1,f=parseInt(document.getElementById('cf').value)||1;document.getElementById('ct').textContent='= '+Math.max(0,f-i+1)+' etiquetas';}
-function marcarEnCursoImp(){sel.est='imp-enc';savePedidos();renderList();renderMain();}
-function marcarEnCursoFab(){sel.est='fab-enc';savePedidos();renderList();renderMain();}
+function savePedidosConFeedback(){
+  var ind=document.getElementById('save-ind');
+  if(ind){ind.textContent='💾 Guardando...';ind.style.color='#ffb300';}
+  fetch(GSURL,{method:'POST',body:JSON.stringify({action:'savePedidos',pedidos:peds})})
+  .then(function(r){return r.json();})
+  .then(function(){if(ind){ind.textContent='✅ Guardado';ind.style.color='#2a6b3c';setTimeout(function(){if(ind)ind.textContent='';},2000);}})
+  .catch(function(e){console.log('Error guardando:',e);if(ind){ind.textContent='❌ Error al guardar';ind.style.color='var(--red)';}alert('Error al guardar en el servidor. Comprueba la conexion e intentalo de nuevo.');});
+}
+function marcarEnCursoImp(){sel.est='imp-enc';savePedidosConFeedback();renderList();renderMain();}
+function marcarEnCursoFab(){sel.est='fab-enc';savePedidosConFeedback();renderList();renderMain();}
 function rlp(lid,nid,p,c){
   caja=c;var el=document.getElementById(lid);if(!el)return;
   el.innerHTML='<div class="lt"><div class="lr">'+p.ref+'</div><div class="ln">'+c+'</div></div>'+
@@ -481,7 +496,226 @@ function cerrarPed(){
   });
 }
 function albaranar(){showM('Albaranar','Confirmas que este pedido ha sido albaranado?',function(){sel.est='alb';sel.asig='';sel.fechaCierre=new Date().toLocaleDateString('es-ES');savePedidos();renderList();sel=null;document.getElementById('main').innerHTML='<div style="padding:40px;color:var(--mut);text-align:center;">Pedido albaranado.</div>';});}
-function imprimir(){alert('Enviando ZPL a Zebra ZD421...');}
+function imprimirHoja(){
+  var p=sel;if(!p)return;
+  var anio=new Date().getFullYear().toString().slice(-2);
+  var impNombre=p.asig==='f1'?'FLEXO 1':p.asig==='f2'?'FLEXO 2':p.asig==='di'?'DIGITAL':'—';
+  var thumbUrl='';
+  if(p.disData){var mid=p.disData.replace('https://drive.google.com/file/d/','').split('/')[0];if(mid)thumbUrl='https://drive.google.com/thumbnail?id='+mid+'&sz=w320';}
+  var provOpts=cfg.provs.map(function(x){return'<span style="border:1.5px solid #2a6b3c;border-radius:3px;padding:2px 7px;font-size:10px;font-weight:700;color:#1b5e20;font-family:monospace;white-space:nowrap;">'+x.c+' <span style="font-weight:400;font-size:8px;">'+x.n+'</span></span>';}).join(' ');
+  var matOpts=cfg.mats.map(function(x){return'<span style="border:1.5px solid #2a6b3c;border-radius:3px;padding:2px 7px;font-size:10px;font-weight:700;color:#1b5e20;font-family:monospace;white-space:nowrap;">'+x.c+' <span style="font-weight:400;font-size:8px;">'+x.n+'</span></span>';}).join(' ');
+  var plOpts=cfg.plantas.map(function(x){return'<span style="border:1.5px solid #2a6b3c;border-radius:3px;padding:2px 7px;font-size:10px;font-weight:700;color:#1b5e20;font-family:monospace;white-space:nowrap;">'+x.c+' <span style="font-weight:400;font-size:8px;">'+x.n+'</span></span>';}).join(' ');
+  var w=window.open('','_blank');
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hoja_'+p.num+'_'+p.ref+'</title>'+
+  '<style>'+
+  '*{box-sizing:border-box;margin:0;padding:0;}'+
+  'html{background:#888;margin:0;padding:0;}'+
+  'body{font-family:Arial,sans-serif;background:#fff;color:#111;font-size:11.5px;padding:5mm;display:flex;flex-direction:column;overflow:hidden;width:297mm;height:210mm;transform-origin:top left;margin:0;}'+
+  '@page{size:A4 landscape;margin:0;}'+
+  '@media print{'+
+  'html,body{width:297mm!important;height:210mm!important;overflow:hidden!important;margin:0!important;padding:0!important;background:#fff!important;}'+
+  'body{padding:5mm!important;transform:none!important;font-size:11.5px!important;}'+
+  'button,.no-print{display:none!important;}'+
+  '*{page-break-inside:avoid!important;}'+
+  '}'+
+  // CABECERA
+  '.cab{display:flex;justify-content:space-between;align-items:center;border-bottom:2.5px solid #111;padding-bottom:4px;margin-bottom:5px;flex-shrink:0;}'+
+  '.cab-ref{font-size:17px;font-weight:900;font-family:monospace;}'+
+  '.cab-info{font-size:10px;color:#444;margin-top:1px;}'+
+  '.cab-right{text-align:right;font-size:9px;color:#888;line-height:1.6;}'+
+  // LAYOUT PRINCIPAL
+  '.layout-top{display:grid;grid-template-columns:1fr 14px 1.3fr 14px 1fr;gap:0;margin-bottom:5px;flex-shrink:0;}'+
+  '.layout-bot{display:grid;grid-template-columns:102mm 1fr;gap:10px;flex:1;min-height:0;}'+
+  '.layout-bot>div{display:flex;flex-direction:column;}'+
+  '.layout-bot .etiq{flex-shrink:0;}'+
+  '.layout-bot .dis-wrap{flex:1;display:flex;flex-direction:column;}'+
+  '.layout-bot .dis-wrap img{flex:1;min-height:0;object-fit:contain;width:100%;border:1.5px solid #333;border-radius:3px;display:block;}'+
+  // BLOQUES
+  '.blq{border:2px solid #111;border-radius:5px;overflow:hidden;display:flex;flex-direction:column;}'+
+  '.bh{padding:5px 10px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:#fff;flex-shrink:0;}'+
+  '.bh.ped{background:#111;}.bh.imp{background:#2a6b3c;}.bh.fab{background:#1a4a8a;}'+
+  '.bb{padding:8px 10px;flex:1;}'+
+  // FLECHA
+  '.arr{display:flex;align-items:center;justify-content:center;font-size:22px;color:#bbb;font-weight:900;}'+
+  // CAMPOS
+  '.lbl{font-size:8.5px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;}'+
+  '.val{font-size:13px;font-weight:700;font-family:monospace;line-height:1.2;}'+
+  '.val.rojo{color:#c8401a;font-size:15px;}'+
+  '.ln{border:none;border-bottom:2px solid #333;height:26px;width:100%;display:block;margin-top:2px;}'+
+  '.ln-fab{border:none;border-bottom:2px solid #1a4a8a;height:26px;width:100%;display:block;margin-top:2px;}'+
+  '.g2{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin-bottom:7px;}'+
+  '.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px 12px;margin-bottom:7px;}'+
+  '.sep{height:1px;background:#ddd;margin:6px 0;}'+
+  // LOTE
+  '.lote-box{background:#f0f7f0;border:2px solid #2a6b3c;border-radius:4px;padding:7px 9px;margin-bottom:6px;}'+
+  '.lote-res{background:#fff;border:2px dashed #2a6b3c;border-radius:3px;padding:5px 9px;margin-top:5px;}'+
+  '.anio{display:inline-block;background:#e8f5e9;border:2px solid #2a6b3c;border-radius:3px;padding:2px 8px;font-size:13px;font-weight:900;font-family:monospace;color:#1b5e20;}'+
+  // FAB DESTINO
+  '.fab-dest{border:2.5px solid #1a4a8a;border-radius:4px;padding:7px 10px;margin-bottom:7px;}'+
+  // ETIQUETA ZEBRA
+  '.etiq{width:102mm;height:64mm;border:1.5px solid #333;border-radius:3px;padding:4mm;background:#fff;display:flex;flex-direction:column;font-family:Arial,sans-serif;flex-shrink:0;}'+
+  '.ez-top{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #000;padding-bottom:2px;margin-bottom:3px;}'+
+  '.ez-ref{font-size:14px;font-weight:900;}.ez-num{font-size:46px;font-weight:900;line-height:1;}'+
+  '.ez-row{display:flex;align-items:center;gap:4px;margin-bottom:2px;}'+
+  '.ez-lbl{border:1.5px solid #000;padding:1px 3px;font-size:7px;font-weight:900;white-space:nowrap;}'+
+  '.ez-val{font-size:8.5px;}'+
+  '</style></head><body>'+
+
+  // CABECERA
+  '<div class="cab">'+
+  '<div>'+
+  '<div style="font-size:7px;color:#999;text-transform:uppercase;letter-spacing:.12em;">Aragami Etiquetas · Hoja de trabajo</div>'+
+  '<div class="cab-ref">'+p.num+' · '+p.ref+'</div>'+
+  '<div class="cab-info">'+p.cli+' · '+p.fec+(p.cajAnon?' · 📦 CAJA ANÓNIMA':'')+'</div>'+
+  '</div>'+
+  '<div style="display:flex;align-items:center;gap:12px;">'+
+  '<div class="cab-right">'+
+  'Impreso: '+new Date().toLocaleDateString('es-ES')+' '+new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})+'<br>'+
+  'Etiquetas: <strong style="color:#c8401a;font-size:11px;">'+p.netiq+'</strong> · Total vasos: <strong style="color:#c8401a;font-size:11px;">'+(p.netiq*p.caj).toLocaleString('es-ES')+'</strong>'+
+  '</div>'+
+  '<div class="no-print" style="display:flex;gap:6px;">'+
+  '<button onclick="window.print()" style="background:#111;color:#fff;border:none;border-radius:4px;padding:7px 16px;font-size:11px;font-weight:700;cursor:pointer;">🖨️ Imprimir</button>'+
+  '<button onclick="var o=document.title;document.title=\'Hoja_'+p.num+'_'+p.ref.replace(/[^A-Z0-9]/gi,'-')+'\';window.print();document.title=o;" style="background:#1a4a8a;color:#fff;border:none;border-radius:4px;padding:7px 16px;font-size:11px;font-weight:700;cursor:pointer;">⬇️ PDF</button>'+
+  '</div>'+
+  '</div>'+
+  '</div>'+
+
+  // FILA SUPERIOR: PEDIDO → IMPRESION → FABRICA
+  '<div class="layout-top">'+
+
+  // PEDIDO
+  '<div class="blq">'+
+  '<div class="bh ped">📋 Pedido</div>'+
+  '<div class="bb">'+
+  '<div class="g2">'+
+  '<div><div class="lbl">Referencia</div><div class="val">'+p.ref+'</div></div>'+
+  '<div><div class="lbl">N Pedido</div><div class="val">'+p.num+'</div></div>'+
+  '</div>'+
+  '<div style="margin-bottom:5px;"><div class="lbl">Cliente</div><div class="val" style="font-family:Arial;font-size:10px;">'+p.cli+'</div></div>'+
+  '<div style="margin-bottom:5px;"><div class="lbl">Producto</div><div class="val" style="font-family:Arial;font-size:9px;font-weight:600;">'+p.prod+'</div></div>'+
+  '<div style="margin-bottom:5px;"><div class="lbl">Impresion</div><div class="val" style="font-family:Arial;font-size:9px;font-weight:600;">'+p.imp+'</div></div>'+
+  '<div class="sep"></div>'+
+  '<div class="g3">'+
+  '<div><div class="lbl">Bolsa/Caja/Pallet</div><div class="val">'+p.bol+'/'+p.caj+'/'+p.cant+'</div></div>'+
+  '<div><div class="lbl">Etiquetas</div><div class="val rojo">'+p.netiq+'</div></div>'+
+  '<div><div class="lbl">Total vasos</div><div class="val rojo">'+(p.netiq*p.caj).toLocaleString('es-ES')+'</div></div>'+
+  '</div>'+
+  '</div></div>'+
+
+  '<div class="arr">→</div>'+
+
+  // IMPRESION
+  '<div class="blq">'+
+  '<div class="bh imp">🖨️ Impresion · '+impNombre+'</div>'+
+  '<div class="bb">'+
+  '<div class="lote-box">'+
+  '<div class="lbl" style="color:#1b5e20;margin-bottom:4px;">🔧 Constructor de lote</div>'+
+  '<div style="margin-bottom:4px;"><div class="lbl" style="margin-bottom:2px;">Proveedor</div><div style="display:flex;gap:4px;flex-wrap:wrap;">'+provOpts+'</div></div>'+
+  '<div class="g2" style="margin-bottom:4px;">'+
+  '<div><div class="lbl" style="margin-bottom:2px;">Año (auto)</div><div class="anio">'+anio+'</div></div>'+
+  '<div><div class="lbl" style="margin-bottom:2px;">Albaran</div><div class="ln"></div></div>'+
+  '</div>'+
+  '<div style="margin-bottom:4px;"><div class="lbl" style="margin-bottom:2px;">Planta / Centro</div><div style="display:flex;gap:4px;flex-wrap:wrap;">'+plOpts+'</div></div>'+
+  '<div style="margin-bottom:4px;"><div class="lbl" style="margin-bottom:2px;">Material</div><div style="display:flex;gap:4px;flex-wrap:wrap;">'+matOpts+'</div></div>'+
+  '<div class="lote-res">'+
+  '<div class="lbl" style="color:#1b5e20;">Lote resultante · <span style="font-weight:400;">Guía: [PROV]'+anio+'-[ALBARAN]-[PLANTA][MAT] · Ej: BO'+anio+'-53690-F1ME</span></div>'+
+  '<div style="border-bottom:2.5px solid #2a6b3c;height:30px;margin-top:4px;"></div>'+
+  '</div>'+
+  '</div>'+
+  '<div class="g2">'+
+  '<div><div class="lbl">Fecha inicio impresion</div><div class="ln"></div></div>'+
+  '<div><div class="lbl">Fecha fin impresion</div><div class="ln"></div></div>'+
+  '</div>'+
+  '</div></div>'+
+
+  '<div class="arr">→</div>'+
+
+  // FABRICA
+  '<div class="blq">'+
+  '<div class="bh fab">🏭 Fabrica</div>'+
+  '<div class="bb">'+
+  '<div class="fab-dest">'+
+  '<div class="lbl" style="color:#1a4a8a;margin-bottom:4px;">1 · Fabrica destino</div>'+
+  '<div style="display:flex;gap:6px;">'+
+  '<span style="border:2px solid #1a4a8a;border-radius:3px;padding:3px 10px;font-size:11px;font-weight:700;color:#1a4a8a;">☐ 6,5oz</span>'+
+  '<span style="border:2px solid #1a4a8a;border-radius:3px;padding:3px 10px;font-size:11px;font-weight:700;color:#1a4a8a;">☐ 6oz</span>'+
+  '<span style="border:2px solid #1a4a8a;border-radius:3px;padding:3px 10px;font-size:11px;font-weight:700;color:#1a4a8a;">☐ 4,8,12oz</span>'+
+  '</div></div>'+
+  '<div class="g2">'+
+  '<div><div class="lbl">2 · Fecha inicio produccion</div><div class="ln-fab"></div></div>'+
+  '<div><div class="lbl">Caja inicio → Caja fin</div><div style="display:flex;gap:4px;align-items:center;"><div class="ln-fab" style="flex:1;"></div><span style="color:#aaa;">→</span><div class="ln-fab" style="flex:1;"></div></div></div>'+
+  '</div>'+
+  '<div class="g2">'+
+  '<div><div class="lbl">3 · Unidades producidas totales</div><div class="ln-fab"></div></div>'+
+  '<div><div class="lbl">Cajas completas</div><div class="ln-fab"></div></div>'+
+  '</div>'+
+  '<div class="g3">'+
+  '<div><div class="lbl">4 · Pico (uds sueltas)</div><div class="ln-fab"></div></div>'+
+  '<div><div class="lbl">Pallets completos</div><div class="ln-fab"></div></div>'+
+  '<div><div class="lbl">Pallet incompleto (cajas)</div><div class="ln-fab"></div></div>'+
+  '</div>'+
+  '<div class="g2">'+
+  '<div><div class="lbl">5 · Fecha fin produccion</div><div class="ln-fab"></div></div>'+
+  '<div><div class="lbl">Operarios</div><div class="ln-fab"></div><div class="ln-fab" style="margin-top:4px;"></div></div>'+
+  '</div>'+
+  '</div></div>'+
+  '</div>'+ // fin layout-top
+
+  // FILA INFERIOR: ETIQUETA + DISEÑO
+  '<div class="layout-bot" style="border-top:2px solid #111;padding-top:6px;">'+
+
+  // ETIQUETA ZEBRA
+  '<div>'+
+  '<div style="font-size:7.5px;font-weight:700;text-transform:uppercase;color:#555;letter-spacing:.1em;margin-bottom:4px;">Modelo etiqueta · 102×64mm Zebra ZD421</div>'+
+  '<div class="etiq">'+
+  '<div class="ez-top"><div class="ez-ref">'+p.ref+'</div><div class="ez-num">1</div></div>'+
+  '<div class="ez-row"><span class="ez-lbl">PRODUCTO:</span><span class="ez-val">'+p.prod+'</span></div>'+
+  '<div class="ez-row"><span class="ez-lbl">IMPRESIÓN:</span><span class="ez-val">'+p.imp+'</span></div>'+
+  '<div class="ez-row"><span class="ez-lbl">BOLSAS:</span><span class="ez-val">'+p.bol+' Uds.</span>&nbsp;<span class="ez-lbl">CAJAS:</span><span class="ez-val">'+p.caj+' uds.</span></div>'+
+  (p.cajAnon?'<div style="background:#fff3cd;border:1px solid #ffb300;border-radius:2px;padding:1px 4px;font-size:7px;font-weight:900;color:#856404;display:inline-block;">📦 CAJA ANÓNIMA</div>':'')+
+  '<div style="margin-top:3px;"><span class="ez-lbl">LOTE:</span><span style="display:inline-block;border-bottom:1.5px solid #000;min-width:120px;">&nbsp;</span></div>'+
+  '<canvas id="ez-bc" style="display:block;margin-top:3px;max-width:92mm;"></canvas>'+
+  '<div style="font-size:6px;font-family:monospace;text-align:center;">*'+p.ref+'*</div>'+
+  '</div></div>'+
+
+  // DISEÑO ADJUNTO o espacio para botones
+  '<div style="display:flex;flex-direction:column;justify-content:space-between;">'+
+  (thumbUrl?
+  '<div style="display:flex;flex-direction:column;flex:1;min-height:0;">'+
+  '<div style="font-size:7.5px;font-weight:700;text-transform:uppercase;color:#555;letter-spacing:.1em;margin-bottom:4px;">Diseño adjunto</div>'+
+  '<img src="'+thumbUrl+'" style="flex:1;min-height:0;width:100%;object-fit:contain;border:1.5px solid #333;border-radius:3px;display:block;">'+
+  '<a href="'+p.disData.replace('/preview','/view')+'" target="_blank" style="display:block;margin-top:3px;font-size:8px;color:#1a4a8a;text-align:center;">🔗 Abrir en Drive</a>'+
+  '</div>':
+  '<div></div>')+
+  '</div>'+
+
+  '</div>'+ // fin layout-bot
+  '</body>'+
+  '<script>'+
+  '(function(){'+
+  'var C={"0":"nnnwwnwnn","1":"wnnwnnnnw","2":"nnwwnnnnw","3":"wnwwnnnnn","4":"nnnwwnnnw","5":"wnnwwnnnn","6":"nnwwwnnnn","7":"nnnwnnwnw","8":"wnnwnnwnn","9":"nnwwnnwnn","A":"wnnnnwnnw","B":"nnwnnwnnw","C":"wnwnnwnnn","D":"nnnnwwnnw","E":"wnnnwwnnn","F":"nnwnwwnnn","G":"nnnnnwwnw","H":"wnnnnwwnn","I":"nnwnnwwnn","J":"nnnnwwwnn","K":"wnnnnnnww","L":"nnwnnnnww","M":"wnwnnnnwn","N":"nnnnwnnww","O":"wnnnwnnwn","P":"nnwnwnnwn","Q":"nnnnnnwww","R":"wnnnnnwwn","S":"nnwnnnwwn","T":"nnnnwnwwn","U":"wwnnnnnnw","V":"nwwnnnnnw","W":"wwwnnnnnn","X":"nwnnwnnnw","Y":"wwnnwnnnn","Z":"nwwnwnnnn","-":"nwnnnnwnw","_":"nwnnnwnnn","*":"nwnnwnnnw"};'+
+  'var text="'+p.ref.toUpperCase().replace(/[^A-Z0-9\-_]/g,'')+'";'+
+  'var bw=1.4,h=24;'+
+  'var full="*"+text+"*",bars=[];'+
+  'for(var i=0;i<full.length;i++){var ch=full[i],pat=C[ch]||C["*"];for(var j=0;j<pat.length;j++)bars.push({w:pat[j]==="w"?bw*3:bw,black:j%2===0});if(i<full.length-1)bars.push({w:bw,black:false});}'+
+  'var tw=bars.reduce(function(s,b){return s+b.w;},0);'+
+  'var cv=document.getElementById("ez-bc");cv.width=tw;cv.height=h;'+
+  'var ctx=cv.getContext("2d");ctx.fillStyle="white";ctx.fillRect(0,0,tw,h);ctx.fillStyle="black";'+
+  'var x=0;bars.forEach(function(b){if(b.black)ctx.fillRect(x,0,b.w,h);x+=b.w;});'+
+  '})();'+
+  'function escalar(){'+
+  'var scaleX=window.innerWidth/document.body.offsetWidth;'+
+  'var scaleY=window.innerHeight/document.body.offsetHeight;'+
+  'var scale=Math.min(scaleX,scaleY)*0.98;'+
+  'document.body.style.transform="scale("+scale+")";'+
+  'document.documentElement.style.height=(document.body.offsetHeight*scale)+"px";'+
+  '}'+
+  'escalar();'+
+  'window.addEventListener("resize",escalar);'+
+  '<\/script></html>');
+  w.document.close();
+}
+
 function showM(t,tx,cb){mcb=cb;document.getElementById('mt').textContent=t;document.getElementById('mp').textContent=tx;document.getElementById('mok').onclick=function(){closeM();if(mcb)mcb();};document.getElementById('modal').classList.remove('hid');}
 function closeM(){document.getElementById('modal').classList.add('hid');}
 function nuevoPedido(){
