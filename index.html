@@ -499,6 +499,7 @@ function cerrarPed(){
 function albaranar(){showM('Albaranar','Confirmas que este pedido ha sido albaranado?',function(){sel.est='alb';sel.asig='';sel.fechaCierre=new Date().toLocaleDateString('es-ES');savePedidos();renderList();sel=null;document.getElementById('main').innerHTML='<div style="padding:40px;color:var(--mut);text-align:center;">Pedido albaranado.</div>';});}
 var ZEBRA_IP='192.168.120.98';
 var ZEBRA_PORT=9100;
+var PRINT_SERVER='http://192.168.120.10:3000/print';
 
 function genZPL(p,caja){
   var lote=p.lote||'';
@@ -557,21 +558,19 @@ function imprimir(){
 
   // Intentar envío directo por fetch a la Zebra
   // Nota: requiere que la app esté en HTTP o que el navegador lo permita
-  fetch('http://'+ZEBRA_IP+':'+ZEBRA_PORT, {
+  fetch(PRINT_SERVER, {
     method:'POST',
     body:zplCompleto,
-    mode:'no-cors'
-  }).then(function(){
-    if(ind){ind.textContent='✅ Enviado a Zebra';ind.style.color='var(--grn)';setTimeout(function(){if(ind)ind.textContent='';},3000);}
+    headers:{'Content-Type':'text/plain'}
+  }).then(function(r){
+    if(r.ok){
+      if(ind){ind.textContent='✅ Enviado a Zebra';ind.style.color='var(--grn)';setTimeout(function(){if(ind)ind.textContent='';},3000);}
+    } else {
+      throw new Error('Error del servidor');
+    }
   }).catch(function(e){
-    if(ind){ind.textContent='';} 
-    // Si falla el fetch directo, ofrecer descarga del ZPL
-    var blob=new Blob([zplCompleto],{type:'text/plain'});
-    var url=URL.createObjectURL(blob);
-    var a=document.createElement('a');
-    a.href=url;a.download=p.ref+'_'+total+'etiq.zpl';a.click();
-    URL.revokeObjectURL(url);
-    alert('No se pudo conectar directamente con la Zebra.\nSe ha descargado el archivo ZPL.\nÁbrelo con Zebra Print para imprimir.');
+    if(ind){ind.textContent='❌ Error impresión';ind.style.color='var(--red)';}
+    alert('Error al conectar con el servidor de impresión.\nAsegúrate de que el PC de impresión está encendido y el servidor ejecutándose.');
   });
 }
 
