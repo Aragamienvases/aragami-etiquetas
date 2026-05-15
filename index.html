@@ -287,6 +287,7 @@ function renderList(){
 function delPed(id){showM('Borrar pedido','Seguro que quieres borrar este pedido?',function(){peds=peds.filter(function(p){return p.id!==id;});if(sel&&sel.id===id)sel=null;savePedidos();renderList();document.getElementById('main').innerHTML='<div style="padding:40px;color:var(--mut);text-align:center;">Selecciona un pedido</div>';});}
 function renderMain(){var m=document.getElementById('main');if(!sel){m.innerHTML='<div style="padding:40px;color:var(--mut);text-align:center;">Selecciona un pedido</div>';return;}if(prof==='of')vOf(m);else if(isFab(prof))vFab(m);else vImp(m);}
 function renderDesign(p){if(!p.disData)return '<div class="da"><span style="color:var(--mut);font-size:12px;">Sin diseno adjunto</span></div>';return '<div class="da"><iframe src="'+p.disData+'" style="width:100%;height:280px;border:none;" allow="autoplay"></iframe></div>';}
+function totalVasos(p){return(p.totalVasos&&p.totalVasos>0)?p.totalVasos:(p.netiq*p.caj);}
 function cajAnonBadge(p){return p.cajAnon?'<div style="grid-column:1/-1;"><div style="background:#fff3cd;border:1px solid #ffb300;border-radius:3px;padding:5px 10px;font-size:12px;font-weight:700;color:#856404;">📦 CAJA ANONIMA</div></div>':'';}
 function renderCfg(){
   return '<div style="margin-bottom:6px;font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;">Proveedores</div>'+
@@ -323,7 +324,7 @@ function vOf(m){
     '<div><div class="ik">Impresion</div><div class="iv" style="font-family:sans-serif;font-size:11px;">'+p.imp+'</div></div>'+
     '<div><div class="ik">Packaging</div><div class="iv">'+p.bol+'/'+p.caj+'/'+p.cant+'</div></div>'+
     '<div><div class="ik">Etiquetas</div><div class="iv" style="color:var(--red);font-weight:700;">'+p.netiq+'</div></div>'+
-    '<div><div class="ik">Total vasos</div><div class="iv" style="color:var(--red);font-weight:700;">'+(p.netiq*p.caj).toLocaleString('es-ES')+'</div></div>'+
+    '<div><div class="ik">Total vasos</div><div class="iv" style="color:var(--red);font-weight:700;">'+totalVasos(p).toLocaleString('es-ES')+'</div></div>'+
     cajAnonBadge(p)+
     (r?'<div><div class="ik">Uds producidas</div><div class="iv" style="color:var(--grn);font-weight:700;">'+p.uds+'</div></div>':'')+
     (r?'<div><div class="ik">Cajas+pico</div><div class="iv">'+r.cajComp+' cajas'+(r.pico?' + '+r.pico+' uds':'')+'</div></div>':'')+
@@ -496,7 +497,83 @@ function cerrarPed(){
   });
 }
 function albaranar(){showM('Albaranar','Confirmas que este pedido ha sido albaranado?',function(){sel.est='alb';sel.asig='';sel.fechaCierre=new Date().toLocaleDateString('es-ES');savePedidos();renderList();sel=null;document.getElementById('main').innerHTML='<div style="padding:40px;color:var(--mut);text-align:center;">Pedido albaranado.</div>';});}
-function imprimirHoja(){
+var ZEBRA_IP='192.168.120.98';
+var ZEBRA_PORT=9100;
+
+function genZPL(p,caja){
+  var lote=p.lote||'';
+  var ref=p.ref||'';
+  var prod=p.prod||'';
+  var imp=p.imp||'';
+  var bol=p.bol||'';
+  var cajU=p.caj||'';
+  var zpl='^XA\n'+
+  '^MMT\n'+
+  '^PW812\n'+
+  '^LL512\n'+
+  '^LS0\n'+
+  // Referencia grande arriba izquierda
+  '^FT30,60^A0N,45,45^FD'+ref+'^FS\n'+
+  // Numero de caja grande arriba derecha
+  '^FT650,80^A0N,70,70^FD'+caja+'^FS\n'+
+  // Linea separadora
+  '^FT20,90^A0N,10,10^GB772,3,3^FS\n'+
+  // Producto
+  '^FT20,130^A0N,30,30^FDPRODUCTO:^FS\n'+
+  '^FT200,130^A0N,30,30^FD'+prod+'^FS\n'+
+  // Impresion
+  '^FT20,170^A0N,30,30^FDIMPRESION:^FS\n'+
+  '^FT200,170^A0N,30,30^FD'+imp+'^FS\n'+
+  // Bolsas y cajas
+  '^FT20,210^A0N,30,30^FDBOLSAS:^FS\n'+
+  '^FT200,210^A0N,30,30^FD'+bol+' Uds.^FS\n'+
+  '^FT450,210^A0N,30,30^FDCAJAS:^FS\n'+
+  '^FT580,210^A0N,30,30^FD'+cajU+' uds.^FS\n'+
+  // Caja anonima si aplica
+  (p.cajAnon?'^FT20,250^A0N,28,28^FDCAJA ANONIMA (SIN LOGO ARAGAMI)^FS\n':'')+
+  // Lote
+  '^FT20,300^A0N,30,30^FDLOTE:^FS\n'+
+  '^FT150,300^A0N,30,30^FD'+lote+'^FS\n'+
+  // Codigo de barras
+  '^FT20,420^BCN,80,Y,N,N\n'+
+  '^FD*'+ref+'*^FS\n'+
+  '^XZ\n';
+  return zpl;
+}
+
+function imprimir(){
+  var p=sel;if(!p)return;
+  var total=p.netiq||0;
+  if(!total||total<1){alert('No hay etiquetas que imprimir');return;}
+  if(!confirm('¿Imprimir '+total+' etiquetas para '+p.ref+'?\n\nAsegúrate de que la Zebra está encendida y conectada.'))return;
+
+  var ind=document.getElementById('save-ind');
+  if(ind){ind.textContent='🖨️ Enviando a Zebra...';ind.style.color='#ffb300';}
+
+  var zplCompleto='';
+  for(var i=1;i<=total;i++){
+    zplCompleto+=genZPL(p,i);
+  }
+
+  // Intentar envío directo por fetch a la Zebra
+  // Nota: requiere que la app esté en HTTP o que el navegador lo permita
+  fetch('http://'+ZEBRA_IP+':'+ZEBRA_PORT, {
+    method:'POST',
+    body:zplCompleto,
+    mode:'no-cors'
+  }).then(function(){
+    if(ind){ind.textContent='✅ Enviado a Zebra';ind.style.color='var(--grn)';setTimeout(function(){if(ind)ind.textContent='';},3000);}
+  }).catch(function(e){
+    if(ind){ind.textContent='';} 
+    // Si falla el fetch directo, ofrecer descarga del ZPL
+    var blob=new Blob([zplCompleto],{type:'text/plain'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url;a.download=p.ref+'_'+total+'etiq.zpl';a.click();
+    URL.revokeObjectURL(url);
+    alert('No se pudo conectar directamente con la Zebra.\nSe ha descargado el archivo ZPL.\nÁbrelo con Zebra Print para imprimir.');
+  });
+}
   var p=sel;if(!p)return;
   var anio=new Date().getFullYear().toString().slice(-2);
   var impNombre=p.asig==='f1'?'FLEXO 1':p.asig==='f2'?'FLEXO 2':p.asig==='di'?'DIGITAL':'—';
@@ -571,7 +648,7 @@ function imprimirHoja(){
   '<div style="display:flex;align-items:center;gap:12px;">'+
   '<div class="cab-right">'+
   'Impreso: '+new Date().toLocaleDateString('es-ES')+' '+new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})+'<br>'+
-  'Etiquetas: <strong style="color:#c8401a;font-size:11px;">'+p.netiq+'</strong> · Total vasos: <strong style="color:#c8401a;font-size:11px;">'+(p.netiq*p.caj).toLocaleString('es-ES')+'</strong>'+
+  'Etiquetas: <strong style="color:#c8401a;font-size:11px;">'+p.netiq+'</strong> · Total vasos: <strong style="color:#c8401a;font-size:11px;">'+totalVasos(p).toLocaleString('es-ES')+'</strong>'+
   '</div>'+
   '<div class="no-print" style="display:flex;gap:6px;">'+
   '<button onclick="window.print()" style="background:#111;color:#fff;border:none;border-radius:4px;padding:7px 16px;font-size:11px;font-weight:700;cursor:pointer;">🖨️ Imprimir</button>'+
@@ -598,7 +675,7 @@ function imprimirHoja(){
   '<div class="g3">'+
   '<div><div class="lbl">Bolsa/Caja/Pallet</div><div class="val">'+p.bol+'/'+p.caj+'/'+p.cant+'</div></div>'+
   '<div><div class="lbl">Etiquetas</div><div class="val rojo">'+p.netiq+'</div></div>'+
-  '<div><div class="lbl">Total vasos</div><div class="val rojo">'+(p.netiq*p.caj).toLocaleString('es-ES')+'</div></div>'+
+  '<div><div class="lbl">Total vasos</div><div class="val rojo">'+totalVasos(p).toLocaleString('es-ES')+'</div></div>'+
   '</div>'+
   '</div></div>'+
 
@@ -771,21 +848,88 @@ function leerPDFFile(file){
       pdf.getPage(1).then(function(page){
         page.getTextContent().then(function(content){
           var lines=content.items.map(function(i){return i.str.trim();}).filter(function(s){return s.length>0;});
+          var full=lines.join('\n');
           var ref='',prod='',imp='',bol='',caj='',pallet='',cant='',num='',fec='',cli='';
+
+          // REFERENCIA — línea 0 siempre
           ref=lines[0]||'';
-          var desc=(lines[1]||'')+' '+(lines[2]||'');
-          if(lines[3]&&/^\d+$/.test(lines[3].trim()))cant=lines[3].trim();
-          var pm=desc.match(/(\d+)\/(\d+)\/(\d+)/);if(pm){bol=pm[1];caj=pm[2];pallet=pm[3];}
-          var desc2=desc.replace(/[_\s]*\d+\/\d+\/\d+\s*/,'').trim();
-          var ui=desc2.indexOf('_');if(ui>0){prod=desc2.substring(0,ui).trim();imp=desc2.substring(ui+1).trim();}else{prod=desc2;}
-          var pvm=lines.join(' ').match(/PV\d+/);if(pvm)num=pvm[0];
-          var fm=lines.join(' ').match(/(\d{2}\/\d{2}\/\d{4})/);if(fm)fec=fm[1];
-          for(var i=0;i<lines.length;i++){if(lines[i].toLowerCase().includes('direcc')){if(lines[i+1]){cli=lines[i+1];break;}}}
+
+          // UNIR todas las líneas en un texto completo para búsquedas
+          var full=lines.join(' ');
+
+          // N PEDIDO
+          var pvm=full.match(/PV\d{5,}/);if(pvm)num=pvm[0];
+
+          // FECHA
+          var fm=full.match(/(\d{2}\/\d{2}\/\d{4})/);if(fm)fec=fm[1];
+
+          // PACKAGING N/N/N — buscar en todo el texto
+          var pm=full.match(/(\d+)\/(\d+)\/(\d+)/);
+          if(pm){bol=pm[1];caj=pm[2];pallet=pm[3];}
+
+          // CANTIDAD TOTAL — es el primer número solo en su línea >= 1000
+          // que aparece DESPUÉS de la descripción (líneas 2 en adelante)
+          // puede estar en línea 2, 3 o 4 dependiendo de si la desc ocupa 1 o 2 líneas
+          cant='';
+          for(var i=1;i<Math.min(lines.length,6);i++){
+            var t=lines[i].trim();
+            if(/^\d+$/.test(t)&&parseInt(t)>=1000){cant=t;break;}
+          }
+          // Si no encontró, buscar el número más grande solo en línea en todo el doc
+          if(!cant){
+            for(var i=0;i<lines.length;i++){
+              var t=lines[i].trim();
+              if(/^\d+$/.test(t)&&parseInt(t)>=10000){cant=t;break;}
+            }
+          }
+
+          // PRODUCTO e IMPRESION
+          // Recoger líneas 1 en adelante hasta encontrar la cantidad o una línea de empresa
+          // y unirlas para manejar descripciones largas en 2 líneas
+          var descParts=[];
+          for(var i=1;i<lines.length;i++){
+            var t=lines[i].trim();
+            // parar cuando encontramos la cantidad, empresa Aragami, o datos de cabecera
+            if(/^\d+$/.test(t)&&parseInt(t)>=1000)break;
+            if(/aragami|autovia|telefono|e_mail|WEB:|CIF:/i.test(t))break;
+            if(/Direcci/i.test(t))break;
+            descParts.push(t);
+          }
+          var descFull=descParts.join(' ');
+          // quitar el packaging de la descripción
+          descFull=descFull.replace(/\s*\d+\/\d+\/\d+\s*/g,' ').trim();
+          // separar producto e impresión por _
+          var ui=descFull.indexOf('_');
+          if(ui>0){prod=descFull.substring(0,ui).trim();imp=descFull.substring(ui+1).trim();}
+          else{prod=descFull;}
+
+          // CLIENTE — primera línea con S.L. o S.A. que no sea Aragami
+          for(var i=0;i<lines.length;i++){
+            if(/(S\.L\.|S\.A\.|SL\b|SA\b)/.test(lines[i])&&!/aragami/i.test(lines[i])){
+              cli=lines[i];break;
+            }
+          }
+
+          // CALCULAR ETIQUETAS
           var etiq=(caj&&cant)?Math.ceil(parseInt(cant)/parseInt(caj)):'';
-          document.getElementById('nr').value=ref;document.getElementById('np').value=prod;document.getElementById('ni2').value=imp;
-          document.getElementById('nb').value=bol;document.getElementById('nca').value=caj;document.getElementById('npa').value=pallet;
-          document.getElementById('nq').value=cant;document.getElementById('ne').value=etiq;
-          document.getElementById('nn').value=num;document.getElementById('nf').value=fec;document.getElementById('nc').value=cli;
+
+          // RELLENAR FORMULARIO
+          document.getElementById('nr').value=ref;
+          document.getElementById('np').value=prod;
+          document.getElementById('ni2').value=imp;
+          document.getElementById('nb').value=bol;
+          document.getElementById('nca').value=caj;
+          document.getElementById('npa').value=pallet;
+          document.getElementById('nq').value=cant;
+          document.getElementById('ne').value=etiq;
+          document.getElementById('nn').value=num;
+          document.getElementById('nf').value=fec;
+          document.getElementById('nc').value=cli;
+
+          // DEBUG — mostrar líneas extraídas para diagnóstico
+          console.log('PDF lines:',lines);
+          console.log('Parsed:',{ref,prod,imp,bol,caj,pallet,cant,num,fec,cli,etiq});
+
           document.getElementById('lpdf').innerHTML='✅ '+nom;
           document.getElementById('lpdf-zone').style.borderColor='var(--grn)';
           document.getElementById('lpdf-zone').style.background='#f6fff8';
@@ -809,6 +953,7 @@ function crearP(dest,destId){
   var p={id:Date.now(),ref:ref,cli:cli,prod:document.getElementById('np').value.trim(),imp:document.getElementById('ni2').value.trim(),
     bol:parseInt(document.getElementById('nb').value)||0,caj:cajVal,cant:paVal,
     netiq:parseInt(document.getElementById('ne').value)||0,lote:'',cajAnon:cajAnon,
+    totalVasos:parseInt(document.getElementById('nq').value)||0,
     est:dest==='pend'?'pend':dest,asig:asig,estImp:'',disData:disEmbed,disType:disEmbed?'drive':null,
     num:document.getElementById('nn').value.trim()||'PV-NUEVO',
     fec:document.getElementById('nf').value.trim()||new Date().toLocaleDateString('es-ES'),
