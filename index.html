@@ -574,6 +574,8 @@ function imprimir(){
     alert('No se pudo conectar directamente con la Zebra.\nSe ha descargado el archivo ZPL.\nÁbrelo con Zebra Print para imprimir.');
   });
 }
+
+function imprimirHoja(){
   var p=sel;if(!p)return;
   var anio=new Date().getFullYear().toString().slice(-2);
   var impNombre=p.asig==='f1'?'FLEXO 1':p.asig==='f2'?'FLEXO 2':p.asig==='di'?'DIGITAL':'—';
