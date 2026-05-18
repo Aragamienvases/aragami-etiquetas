@@ -557,15 +557,13 @@ function genZPL(p,caja){
 function imprimir(){
   var p=sel;if(!p)return;
   var total=p.netiq||0;
-  if(!total||total<1){alert('No hay etiquetas que imprimir');return;}
 
-  var desde=parseInt(prompt('Etiqueta DESDE (1 = primera):\nTotal etiquetas: '+total,'1'))||0;
+  var desde=parseInt(prompt('Etiqueta DESDE:\n(Total pedido: '+total+' etiquetas)','1'))||0;
   if(!desde||desde<1)return;
-  var hasta=parseInt(prompt('Etiqueta HASTA ('+total+' = última):',total))||0;
-  if(!hasta||hasta<desde){alert('Rango no válido');return;}
-  hasta=Math.min(hasta,total);
+  var hasta=parseInt(prompt('Etiqueta HASTA:\n(Puedes poner un número mayor al total para etiquetas extra)',desde))||0;
+  if(!hasta||hasta<desde){alert('Rango no válido — HASTA debe ser igual o mayor que DESDE');return;}
 
-  if(!confirm('¿Imprimir etiquetas '+desde+' a '+hasta+' ('+( hasta-desde+1)+' etiquetas) para '+p.ref+'?\n\nAsegúrate de que la Zebra está encendida.'))return;
+  if(!confirm('¿Imprimir etiquetas '+desde+' a '+hasta+' ('+(hasta-desde+1)+' etiquetas) para '+p.ref+'?\n\nAsegúrate de que la Zebra está encendida.'))return;
 
   var ind=document.getElementById('save-ind');
   if(ind){ind.textContent='🖨️ Enviando a Zebra...';ind.style.color='#ffb300';}
