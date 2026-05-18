@@ -853,7 +853,7 @@ function selDestNuevo(tipo){
   g.innerHTML=opts.map(function(o){return'<div class="sel-btn" onclick="crearP(\''+tipo+'\',\''+o.id+'\');closeDest();"><div class="snm">'+o.nm+'</div></div>';}).join('');
   document.getElementById('modal-dest').classList.remove('hid');
 }
-function calcE(){var q=parseInt(document.getElementById('nq').value)||0,ca=parseInt(document.getElementById('nca').value)||1;document.getElementById('ne').value=ca>0?Math.ceil(q/ca):'';}
+function calcE(){var q=parseInt(document.getElementById('nq').value)||0,ca=parseInt(document.getElementById('nca').value)||1;var e=ca>0?Math.ceil(q/ca):0;document.getElementById('ne').value=e||'';}
 function leerPDF(input){if(!input.files[0])return;leerPDFFile(input.files[0]);}
 function leerPDFFile(file){
   if(!file)return;
