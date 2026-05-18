@@ -558,19 +558,24 @@ function imprimir(){
   var p=sel;if(!p)return;
   var total=p.netiq||0;
   if(!total||total<1){alert('No hay etiquetas que imprimir');return;}
-  if(!confirm('¿Imprimir '+total+' etiquetas para '+p.ref+'?\n\nAsegúrate de que la Zebra está encendida y conectada.'))return;
+
+  var desde=parseInt(prompt('Etiqueta DESDE (1 = primera):\nTotal etiquetas: '+total,'1'))||0;
+  if(!desde||desde<1)return;
+  var hasta=parseInt(prompt('Etiqueta HASTA ('+total+' = última):',total))||0;
+  if(!hasta||hasta<desde){alert('Rango no válido');return;}
+  hasta=Math.min(hasta,total);
+
+  if(!confirm('¿Imprimir etiquetas '+desde+' a '+hasta+' ('+( hasta-desde+1)+' etiquetas) para '+p.ref+'?\n\nAsegúrate de que la Zebra está encendida.'))return;
 
   var ind=document.getElementById('save-ind');
   if(ind){ind.textContent='🖨️ Enviando a Zebra...';ind.style.color='#ffb300';}
 
   var zplCompleto='';
-  for(var i=1;i<=total;i++){
+  for(var i=desde;i<=hasta;i++){
     zplCompleto+=genZPL(p,i);
   }
 
-  // Intentar envío directo por fetch a la Zebra
-  // Nota: requiere que la app esté en HTTP o que el navegador lo permita
-  fetch(PRINT_SERVER, {
+  fetch(PRINT_SERVER,{
     method:'POST',
     body:zplCompleto,
     headers:{'Content-Type':'text/plain'}
