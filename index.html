@@ -352,8 +352,9 @@ function vImp(m){
   var loteInicial=p.lote?'LOTE: '+p.lote:'LOTE: -';
   var topBtn=!isDone?'<button class="btn b1" onclick="selDest(\'fab\')">Enviar a Fabrica</button>':'<span class="bx bt" style="font-size:12px;padding:6px 12px;">Enviado a Fabrica</span>';
   m.innerHTML='<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px;">'+
+    '<div style="display:flex;align-items:center;gap:10px;"><button class="btn" style="background:var(--sur);border:1px solid var(--bor);font-size:11px;padding:6px 12px;" onclick="volverPendienteImp()">← Volver a pendiente</button>'+
     '<div><div style="font-size:10px;color:var(--mut);font-weight:700;text-transform:uppercase;">Pedido recibido</div>'+
-    '<div style="font-size:19px;font-weight:700;font-family:monospace;">'+p.num+' - '+p.ref+'</div></div>'+topBtn+'</div>'+
+    '<div style="font-size:19px;font-weight:700;font-family:monospace;">'+p.num+' - '+p.ref+'</div></div></div>'+topBtn+'</div>'+
     '<div class="tc"><div>'+
     '<div class="pan"><div class="ph">Datos</div><div class="pb2"><div class="ig">'+
     '<div><div class="ik">Ref</div><div class="iv">'+p.ref+'</div></div>'+
@@ -443,6 +444,11 @@ function vFab(m){
 }
 
 function ul(){var lp=document.getElementById('lp'),la=document.getElementById('la'),lab=document.getElementById('lab'),lpl=document.getElementById('lpl'),lm=document.getElementById('lm');if(!lp)return;document.getElementById('lr').textContent='LOTE: '+lp.value+la.value+'-'+(lab.value||'?')+'-'+lpl.value+lm.value;}
+function volverPendienteImp(){
+  showM('Volver a pendiente','¿Seguro que quieres devolver este pedido a pendiente? Se borrará el lote asignado.',function(){
+    sel.est='imp';sel.lote='';savePedidosConFeedback();renderList();renderMain();
+  });
+}
 function apLote(){var el=document.getElementById('lr');if(!el)return;var l=el.textContent.replace('LOTE: ','');if(l==='-'||!l)return;sel.lote=l;if(sel.est==='imp')sel.est='imp-enc';savePedidosConFeedback();renderList();renderMain();}
 function uct(){var i=parseInt(document.getElementById('ci').value)||1,f=parseInt(document.getElementById('cf').value)||1;document.getElementById('ct').textContent='= '+Math.max(0,f-i+1)+' etiquetas';}
 function savePedidosConFeedback(){
