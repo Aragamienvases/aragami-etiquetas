@@ -501,13 +501,25 @@ var ZEBRA_IP='192.168.120.98';
 var ZEBRA_PORT=9100;
 var PRINT_SERVER='http://192.168.120.91:3000/print';
 
+function limpiarZPL(txt){
+  if(!txt)return'';
+  return txt
+    .replace(/á/g,'a').replace(/é/g,'e').replace(/í/g,'i').replace(/ó/g,'o').replace(/ú/g,'u')
+    .replace(/Á/g,'A').replace(/É/g,'E').replace(/Í/g,'I').replace(/Ó/g,'O').replace(/Ú/g,'U')
+    .replace(/ñ/g,'n').replace(/Ñ/g,'N')
+    .replace(/ü/g,'u').replace(/Ü/g,'U')
+    .replace(/à/g,'a').replace(/è/g,'e').replace(/ì/g,'i').replace(/ò/g,'o').replace(/ù/g,'u')
+    .replace(/â/g,'a').replace(/ê/g,'e').replace(/î/g,'i').replace(/ô/g,'o').replace(/û/g,'u')
+    .replace(/[^\x00-\x7F]/g,'?');
+}
+
 function genZPL(p,caja){
-  var lote=p.lote||'';
-  var ref=p.ref||'';
-  var prod=p.prod||'';
-  var imp=p.imp||'';
-  var bol=p.bol||'';
-  var cajU=p.caj||'';
+  var lote=limpiarZPL(p.lote||'');
+  var ref=limpiarZPL(p.ref||'');
+  var prod=limpiarZPL(p.prod||'');
+  var imp=limpiarZPL(p.imp||'');
+  var bol=limpiarZPL(p.bol||'');
+  var cajU=limpiarZPL(p.caj||'');
   var zpl='^XA\n'+
   '^MMT\n'+
   '^PW812\n'+
@@ -531,7 +543,7 @@ function genZPL(p,caja){
   '^FT450,210^A0N,30,30^FDCAJAS:^FS\n'+
   '^FT580,210^A0N,30,30^FD'+cajU+' uds.^FS\n'+
   // Caja anonima si aplica
-  (p.cajAnon?'^FT20,250^A0N,28,28^FDCAJA ANONIMA (SIN LOGO ARAGAMI)^FS\n':'')+
+  (p.cajAnon?'^FT20,250^A0N,28,28^FDCAJA ANONIMA^FS\n':'')+
   // Lote
   '^FT20,300^A0N,30,30^FDLOTE:^FS\n'+
   '^FT150,300^A0N,30,30^FD'+lote+'^FS\n'+
