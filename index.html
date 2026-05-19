@@ -505,7 +505,7 @@ function cerrarPed(){
 function albaranar(){showM('Albaranar','Confirmas que este pedido ha sido albaranado?',function(){sel.est='alb';sel.asig='';sel.fechaCierre=new Date().toLocaleDateString('es-ES');savePedidos();renderList();sel=null;document.getElementById('main').innerHTML='<div style="padding:40px;color:var(--mut);text-align:center;">Pedido albaranado.</div>';});}
 var ZEBRA_IP='192.168.120.98';
 var ZEBRA_PORT=9100;
-var PRINT_SERVER='http://192.168.120.91:3000/print';
+var PRINT_SERVER='/print';
 
 function limpiarZPL(txt){
   if(!txt)return'';
