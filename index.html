@@ -505,7 +505,7 @@ function cerrarPed(){
 function albaranar(){showM('Albaranar','Confirmas que este pedido ha sido albaranado?',function(){sel.est='alb';sel.asig='';sel.fechaCierre=new Date().toLocaleDateString('es-ES');savePedidos();renderList();sel=null;document.getElementById('main').innerHTML='<div style="padding:40px;color:var(--mut);text-align:center;">Pedido albaranado.</div>';});}
 var ZEBRA_IP='192.168.120.98';
 var ZEBRA_PORT=9100;
-var PRINT_SERVER='/print';
+var PRINT_SERVER='http://192.168.120.91:3000/print';
 
 function limpiarZPL(txt){
   if(!txt)return'';
@@ -563,19 +563,15 @@ function genZPL(p,caja){
 function imprimir(){
   var p=sel;if(!p)return;
   var total=p.netiq||0;
+  if(!total||total<1){alert('No hay etiquetas que imprimir');return;}
 
-  var desde=parseInt(prompt('Etiqueta DESDE:\n(Total pedido: '+total+' etiquetas)','1'))||0;
-  if(!desde||desde<1)return;
-  var hasta=parseInt(prompt('Etiqueta HASTA:\n(Puedes poner un número mayor al total para etiquetas extra)',desde))||0;
-  if(!hasta||hasta<desde){alert('Rango no válido — HASTA debe ser igual o mayor que DESDE');return;}
-
-  if(!confirm('¿Imprimir etiquetas '+desde+' a '+hasta+' ('+(hasta-desde+1)+' etiquetas) para '+p.ref+'?\n\nAsegúrate de que la Zebra está encendida.'))return;
+  if(!confirm('Imprimir '+total+' etiquetas para '+p.ref+'?'))return;
 
   var ind=document.getElementById('save-ind');
   if(ind){ind.textContent='🖨️ Enviando a Zebra...';ind.style.color='#ffb300';}
 
   var zplCompleto='';
-  for(var i=desde;i<=hasta;i++){
+  for(var i=1;i<=total;i++){
     zplCompleto+=genZPL(p,i);
   }
 
@@ -587,11 +583,11 @@ function imprimir(){
     if(r.ok){
       if(ind){ind.textContent='✅ Enviado a Zebra';ind.style.color='var(--grn)';setTimeout(function(){if(ind)ind.textContent='';},3000);}
     } else {
-      throw new Error('Error del servidor');
+      throw new Error('Error');
     }
   }).catch(function(e){
-    if(ind){ind.textContent='❌ Error impresión';ind.style.color='var(--red)';}
-    alert('Error al conectar con el servidor de impresión.\nAsegúrate de que el PC de impresión está encendido y el servidor ejecutándose.');
+    if(ind){ind.textContent='❌ Error';ind.style.color='var(--red)';}
+    alert('Error al conectar con el servidor.');
   });
 }
 
